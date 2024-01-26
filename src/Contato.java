@@ -63,16 +63,17 @@ public class Contato {
 
     // Adição, Remoção, Edição
     public void addTelefone(long id, String ddd, long numero) {
-        if (id > 0) {//Antes de adicionar é verificado se o id ou o numero já existe e o id se é maior que 0
+        if (id > 0) {//Antes de adicionar é verificado se o id ou o numero já existe na lista de telefones e o id se é maior que 0
             if (!verificaIdExistente(id) && !verificaNumExistente(ddd, numero)) {
                 Telefone novoTelefone = new Telefone(id, ddd, numero);
                 this.telefones.add(novoTelefone);
+                System.out.println("Telefone cadastrado com sucesso.");
             } else {
                 if (verificaIdExistente(id)) {
-                    System.out.println("O Id " + id + " já está cadastrado na agenda.");
+                    System.out.println("O Id " + id + " já está cadastrado na lista de telefones.");
                 }
                 if (verificaNumExistente(ddd, numero)) {
-                    System.out.println("O número " + ddd + " " + numero + " já foi cadastrado na agenda.");
+                    System.out.println("O número " + ddd + " " + numero + " já foi cadastrado na lista de telefones.");
                 }
             }
         } else {
@@ -83,8 +84,9 @@ public class Contato {
     public void rmTelefone(long id) {
         if (verificaIdExistente(id)) {
             telefones.removeIf(telefone -> telefone.getId() == id);
+            System.out.println("Telefone removido com sucesso.");
         } else {
-            System.out.println("Id " + id + " não encontrado na agenda. Por favor, tente novamente.");
+            System.out.println("Id " + id + " não encontrado na lista de numeros. Por favor, tente novamente.");
         }
     }
 
