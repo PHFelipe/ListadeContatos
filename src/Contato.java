@@ -13,7 +13,7 @@ public class Contato {
         this.id = id;
         this.nome = nome;
         this.sobreNome = sobreNome;
-        this.telefones = telefones;
+        this.telefones = new ArrayList<>(telefones);
     }
 
     // Métodos set
@@ -60,6 +60,66 @@ public class Contato {
         }
         return false;
     }
+    public static List<Telefone> recebeTelefones(Scanner scanner) {
+        List<Telefone> telefones = new ArrayList<>();
+
+        System.out.println("Quantos telefones você deseja adicionar?");
+        int quantidadeTelefones = scanner.nextInt();
+        scanner.nextLine();
+
+        for (int i = 0; i < quantidadeTelefones; i++) {
+            System.out.println("Digite o Id do contato:");
+            long idContato;
+            do {
+                System.out.println("Digite o ID:");
+                while (!scanner.hasNextLong()) {
+                    System.out.println("O ID registrado é inválido! Digite novamente:");
+                    scanner.next();
+                }
+                idContato = scanner.nextLong();
+                if (idContato <= 0) {
+                    System.out.println("O ID registrado deve ser positivo! Digite novamente:");
+                }
+            } while (idContato <= 0);
+
+            System.out.println("Digite o DDD do telefone:");
+            String ddd = scanner.nextLine();
+
+            // Caso o DDD seja inválido ele vai solicitar um DDD válido
+            do {
+                System.out.println("Digite o DDD (Apenas 2 dígitos numéricos):");
+                ddd = scanner.nextLine();
+
+                if (ddd.length() == 1) {
+                    ddd = "0" + ddd; // Adiciona zero no início se o DDD tiver apenas um dígito
+                }
+
+            } while (ddd.length() < 2 || contemLetra(ddd) || ddd.length() > 2);
+
+            System.out.println("Digite o Número do telefone:");
+            long numero;
+            do {
+                System.out.println("Digite um número de telefone válido (11 dígitos):");
+                numero = scanner.nextLong();
+            } while (Long.toString(numero).length() != 11);
+
+            // Instanciando um novo telefone e adicionando à lista
+            Telefone novoTelefone = new Telefone(idContato, ddd, numero);
+            telefones.add(novoTelefone);
+        }
+
+        // Retornando a lista de telefones
+        return telefones;
+    }
+
+    public static boolean contemLetra(String input) {
+        for (char caractere : input.toCharArray()) {
+            if (Character.isDigit(caractere)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     // Adição, Remoção, Edição
     public void addTelefone(long id, String ddd, long numero) {
@@ -71,8 +131,7 @@ public class Contato {
             } else {
                 if (verificaIdExistente(id)) {
                     System.out.println("O Id " + id + " já está cadastrado na lista de telefones.");
-                }
-                if (verificaNumExistente(ddd, numero)) {
+                } else if (verificaNumExistente(ddd, numero)) {
                     System.out.println("O número " + ddd + " " + numero + " já foi cadastrado na lista de telefones.");
                 }
             }
@@ -117,7 +176,6 @@ public class Contato {
                 }
             } while (!numeroUnicoInserido);
 
-            // Fechando o Scanner fora do loop
             scanner.close();
         } else {
             System.out.println("Telefone não encontrado na agenda.");
