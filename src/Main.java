@@ -5,21 +5,6 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Agenda agenda = new Agenda();
-        List<Contato> contatos = new ArrayList<>();
-        // Criando alguns contatos com telefones
-        Contato contato1 = new Contato(1, "João", "Silva", new ArrayList<>());
-        contato1.addTelefone(1, "123", 987654321);
-
-        Contato contato2 = new Contato(2, "Maria", "Oliveira", new ArrayList<>());
-        contato2.addTelefone(2, "456", 987654322);
-
-        Contato contato3 = new Contato(3, "Carlos", "Santos", new ArrayList<>());
-        contato3.addTelefone(3, "789", 987654323);
-
-        // Adicionando os contatos à lista
-        contatos.add(contato1);
-        contatos.add(contato2);
-        contatos.add(contato3);
 
         //Cores
         String Azul = "\u001B[34m";
@@ -38,15 +23,13 @@ public class Main {
                     "Id | Nome");
 
             //Apresentação dos contatos na lista
-            for (Contato contato : contatos) {
-                System.out.println(contato.getId() + "  | " + contato.getNome() + " "+ contato.getSobreNome());
-            }
+            agenda.exibirAgenda();
 
             //Menu
             System.out.println("\n" +
                     Negrito+">>>>"+ reset + Vermelho +" Menu "+ reset + Negrito+"<<<<"+ reset);
             System.out.println("1 - Adicionar Contato\n"+
-                    "2 - Remover Contato\n"+
+                    "2 - Remover Contato \n"+
                     "3 - Editar Contato\n"+
                     "4 - Sair");
 
@@ -57,25 +40,18 @@ public class Main {
 
                 switch(opcao){
                     case 1:
-                        //Dados para um novo contato
-                        long novoId = agenda.recebeId(scanner);
-                        String[] nomes = agenda.recebeNome(scanner);
-                        String primeiroNome = nomes[0];
-                        String sobrenome = nomes.length > 1 ? nomes[1] : "";
-
-                        agenda.addContato(novoId,primeiroNome,sobrenome,Contato.recebeTelefones(scanner));
-
+                        agenda.addContato();
                         break;
 
                     case 2:
-                        System.out.println("Estamos em construção, contacte o programador");
+                        agenda.rmContato();
                         break;
                     case 3:
                         // Restante do código do case 3
                         // ...
                         break;
                     case 4:
-                        // Restante do código do case 4
+                        // Sair do programa
                         System.exit(0);
                         break;
                     default:
@@ -86,10 +62,8 @@ public class Main {
                 System.out.println("Opção inválida. Por favor, digite um número correspondente à opção desejada.");
                 scanner.next(); // Limpa o buffer do Scanner
             }
-
-            scanner.close();
-            break;
         }
+
 
     }
 

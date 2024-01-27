@@ -9,17 +9,7 @@ public class Agenda {
         this.contatos = new ArrayList<>();
     }
 
-    public boolean verificaNomeExistente(String nome, String Sobrenome){
-        String nomeNovo = nome + Sobrenome;
-        for(Contato contatoExistente : this.contatos){
-            String nomeExistente = contatoExistente.getNome() + contatoExistente.getSobreNome();
-            if(nomeNovo.equals(nomeExistente)){
-                return true;
-            }
-        }
-        return false;
-    }
-    public boolean verificaIdExistente(long idNovo) {
+    public boolean verificaIdExistente(Long idNovo) {
         for (Contato contato : this.contatos) {
             if (contato.getId() == idNovo) {
                 return true;
@@ -27,69 +17,118 @@ public class Agenda {
         }
         return false;
     }
-    public static long recebeId(Scanner scanner) {
-        long novoId;
+
+    public void addContato() {
+        Scanner scanner = new Scanner(System.in);
+        Contato novoContato = new Contato();
+
+        //######## Entrada de ID ########
+        System.out.println("Digite o ID do Contato:");
+        String idNovo = scanner.nextLine();
+
+        while(!contemNumero(idNovo) || verificaIdExistente(Long.valueOf(idNovo))){
+            if(!contemNumero(idNovo)) {
+                System.out.println("O ID deve ser numérico! Digite o ID novamente:");
+            }else if(verificaIdExistente(Long.valueOf(idNovo))){
+                System.out.println("Id Já cadastrado na lista");
+            }
+            idNovo = scanner.nextLine();
+        }
+        System.out.println("Id Cadastrado com Sucesso.");
+
+        //######## Entrada de Nome ########
+        System.out.println("Digite o nome e o sobrenome separados por espaço:");
+        String novoNome = scanner.nextLine();
+        String[] nomeEsobrenome = novoNome.split(" ");
+
+        while(novoNome.trim().isEmpty()){
+            System.out.println("O nome não pode estar vazio");
+            System.out.println("Digite o nome e o sobrenome separados por espaço:");
+            novoNome = scanner.nextLine();
+        }
+        System.out.println("Nome Cadastrado com Sucesso.");
+
+        //######## Entrada de Telefone ########
+        boolean adicionouContato;
+        do {
+            System.out.println("Digite o ID do Telefone:");
+            String idTelefone = scanner.nextLine();
+
+            while (!contemNumero(idNovo)) {
+                System.out.println("O ID deve ser numérico! Digite o ID novamente:");
+                idTelefone = scanner.nextLine();
+            }
+            System.out.println("Id Cadastrado com Sucesso.");
+
+
+            System.out.println("Informe o número com o DDD Exemplo->(11939254969):");
+            String numeroEddd = scanner.nextLine();
+
+            while (numeroEddd.length() != 11 || !contemNumero(numeroEddd)) {
+                System.out.println("Número inválido, Digite um número com 11 digitos.");
+                System.out.println("Informe o número com o DDD Exemplo->(11939254969):");
+                numeroEddd = scanner.nextLine();
+            }
+            adicionouContato = novoContato.addTelefone(Long.valueOf(idTelefone), numeroEddd.substring(0, 2), Long.valueOf(numeroEddd.substring(2)));
+        }while(!adicionouContato);
+        System.out.println("Número Cadastrado com Sucesso.");
+
+        //######## Setagem de dados ########
+        novoContato.setId(Long.valueOf(idNovo));
+
+        if(nomeEsobrenome.length == 1){
+            novoContato.setNome(nomeEsobrenome[0]);
+            novoContato.setSobreNome("");
+        }else{
+            novoContato.setNome(nomeEsobrenome[0]);
+            novoContato.setSobreNome(nomeEsobrenome[1]);
+        }
+
+        this.contatos.add(novoContato);
+        System.out.println("Contato cadastrado com sucesso na Agenda.");
+    }
+
+    public void rmContato() {
+        Scanner scanner = new Scanner(System.in);
+        boolean idRemovido = false;
 
         do {
-            System.out.println("Digite o ID:");
-            while (!scanner.hasNextLong()) {// Verificação se o usuário está digitando um ID numérico
-                System.out.println("O ID registrado é inválido! Digite novamente:");
-                scanner.next();
-            }
-            novoId = scanner.nextLong();
-            if (novoId <= 0) {// Verificação se o usuário está digitando um ID positivo
-                System.out.println("O ID registrado deve ser positivo! Digite novamente:");
-            }
-        } while (novoId <= 0);
+            System.out.println("Digite o ID do Telefone que voce deseja remover:");
+            String id = scanner.nextLine();
 
-        return novoId;
+
+            if (!contemNumero(id)) {
+                System.out.println("O ID deve ser numérico! Digite o ID novamente:");
+                continue;
+            }
+
+            if (verificaIdExistente(Long.valueOf(id))) {
+                String finalId = id;
+                contatos.removeIf(contato -> contato.getId() == Long.valueOf(finalId));
+                System.out.println("Telefone removido com sucesso.");
+                idRemovido = true;
+            } else {
+                System.out.println("Id " + id + " não encontrado na lista de numeros. Por favor, tente novamente.");
+            }
+
+        }while (!idRemovido);
     }
 
-    public static String[] recebeNome(Scanner scanner) {
-        String nomeCompleto;
-        do {
-            System.out.println("Digite o nome e o sobrenome separado por espaço:");
-            nomeCompleto = scanner.nextLine();
-            if (nomeCompleto.isEmpty()) {
-                System.out.println("O nome não pode estar vazio! Digite novamente:");
+    public void exibirAgenda(){
+        if(this.contatos.size() >= 1){
+            for(Contato contato : this.contatos){
+                System.out.println(contato.getId() + " | " + contato.getNome() + " " + contato.getSobreNome());
             }
-        } while (nomeCompleto.isEmpty());
-
-        String[] nomeEsobrenome = nomeCompleto.split(" ");
-
-        String primeiroNome = nomeEsobrenome[0];
-        if(nomeEsobrenome.length > 1) {
-            String ultimoSobrenome = nomeEsobrenome[nomeEsobrenome.length - 1];
-            return new String[]{primeiroNome, ultimoSobrenome};
-        }
-        return new String[]{primeiroNome};
-    }
-
-    public void addContato(long id, String nome, String sobreNome, List<Telefone> telefones) {
-        if (id > 0) {//Antes de adicionar é verificado se o id ou o numero já existe na lista de telefones e o id se é maior que 0
-            if (!verificaIdExistente(id) && !verificaNomeExistente(nome,sobreNome)) {
-                Contato novoContato = new Contato(id, nome, sobreNome,telefones);
-                this.contatos.add(novoContato);
-                System.out.println("Contato cadastrado com sucesso na Agenda.");
-            } else {//Tratamento de erros de ID igual e nome igual dentro da agenda
-                if (verificaIdExistente(id)) {
-                    System.out.println("O Id " + id + " já está cadastrado na Agenda.");
-                }else if (verificaNomeExistente(nome,sobreNome)) {
-                    System.out.println(nome + " " + sobreNome + " já está cadastrado na agenda.");
-                }
-            }
-        } else {
-            System.out.println("O Id deve ser Obrigatoriamente maior que zero");
         }
     }
-
-    public void rmContato(long id){
-        if (verificaIdExistente(id)) {
-            contatos.removeIf(contato -> contato.getId() == id);
-            System.out.println("Contato removido da agenda com sucesso.");
-        } else {
-            System.out.println("Id " + id + " não encontrado na agenda. Por favor, tente novamente.");
+    public static boolean contemNumero(String input) {
+        for (char caractere : input.toCharArray()) {
+            if (Character.isDigit(caractere)) {
+                return true;
+            }
         }
+        return false;
     }
 
 }
+

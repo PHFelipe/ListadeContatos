@@ -5,7 +5,7 @@ public class Telefone {
     private Long numero;
 
     //Construtor:
-    public Telefone(long id, String ddd,long numero){
+    public Telefone(Long id, String ddd,Long numero){
         this.id = id;
         this.ddd = ddd;
         this.numero = numero;
@@ -13,9 +13,9 @@ public class Telefone {
 
     //Métodos Set:
 
-    public void setId(long id){this.id = id;}
+    public void setId(Long id){this.id = id;}
     public void setDdd(String ddd){this.ddd = ddd;}
-    public void setNumero(long numero){this.numero = numero;}
+    public void setNumero(Long numero){this.numero = numero;}
 
     //Métodos Get:
 
