@@ -2,6 +2,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.BufferedReader;
+import java.io.FileReader;
+
 
 public class Agenda {
     private List<Contato> contatos = new ArrayList<>();
@@ -14,6 +20,20 @@ public class Agenda {
         for (Contato contato : this.contatos) {
             if (contato.getId() == idNovo) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean verificaNumExistente(String numeroEddd){
+        String ddd = numeroEddd.substring(0, 2);
+        Long numero = Long.valueOf(numeroEddd.substring(2));
+        //######## Verificação de existencia do número ########
+        for(Contato contato : this.contatos){
+            for(Telefone telefone : contato.getTelefones()){
+                if(Objects.equals(telefone.getDdd(), ddd) && Objects.equals(telefone.getNumero(), numero)){
+                    return true;
+                }
             }
         }
         return false;
@@ -65,11 +85,20 @@ public class Agenda {
             System.out.println("Informe o número com o DDD Exemplo->(11939254969):");
             String numeroEddd = scanner.nextLine();
 
-            while (numeroEddd.length() != 11 || !contemNumero(numeroEddd)) {
-                System.out.println("Número inválido, Digite um número com 11 digitos.");
-                System.out.println("Informe o número com o DDD Exemplo->(11939254969):");
+            while (numeroEddd.length() != 11 || !contemNumero(numeroEddd) || verificaNumExistente(numeroEddd)) {
+                //######## Erro de número inválido ########
+                if(numeroEddd.length() != 11 || !contemNumero(numeroEddd)) {
+                    System.out.println("Número inválido, Digite um número com 11 digitos.");
+                    System.out.println("Informe o número com o DDD Exemplo->(11939254969):");
+                }
+                //######## Erro de número existente ########
+                else if(verificaNumExistente(numeroEddd)){
+                    System.out.println("O número Informado já está cadastrado na lista, tente novamente.");
+                    System.out.println("Informe o número com o DDD Exemplo->(11939254969):");
+                }
                 numeroEddd = scanner.nextLine();
             }
+
             adicionouContato = novoContato.addTelefone(Long.valueOf(idTelefone), numeroEddd.substring(0, 2), Long.valueOf(numeroEddd.substring(2)));
         }while(!adicionouContato);
         System.out.println("Número Cadastrado com Sucesso.");
@@ -79,7 +108,7 @@ public class Agenda {
 
         if(nomeEsobrenome.length == 1){
             novoContato.setNome(nomeEsobrenome[0]);
-            novoContato.setSobreNome("");
+            novoContato.setSobreNome(" ");
         }else{
             novoContato.setNome(nomeEsobrenome[0]);
             novoContato.setSobreNome(nomeEsobrenome[1]);
@@ -169,6 +198,61 @@ public class Agenda {
             }
         }
         return false;
+    }
+
+    public void lerAgenda(){
+        try(BufferedReader br = new BufferedReader(new FileReader("Agenda.txt"))){
+            String linha;
+
+            while((linha = br.readLine()) != null){
+
+                String linhaFinal = linha;
+                String[] dadosSeparados = linhaFinal.split("\\|");
+                String[] nomeEsobrenome = dadosSeparados[0].split(",");
+
+                //######### Adicionar dados do Contato #########
+                Contato novoContato = new Contato();
+                novoContato.setId(Long.valueOf(nomeEsobrenome[0]));
+                novoContato.setNome(nomeEsobrenome[1]);
+                novoContato.setSobreNome(nomeEsobrenome[2]);
+
+                //######### Adicionar Telefones do Contato #########
+                if(dadosSeparados.length > 1){
+                    for(int i = 1; i < dadosSeparados.length;i++){
+                        String[] idEnumero = dadosSeparados[i].split(",");
+                        String id = idEnumero[0];
+                        String numEddd = idEnumero[1];
+                        novoContato.recebeTelefone(Long.valueOf(id),numEddd.substring(0, 2), Long.valueOf(numEddd.substring(2)));
+                        this.contatos.add(novoContato);
+                    }
+                }
+
+            }
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public void escreverAgenda(){
+        try(PrintWriter escrever = new PrintWriter(new FileWriter("Agenda.txt"))){
+            for(Contato contato : this.contatos){
+                escrever.print(contato.getId() +",");
+                escrever.print(contato.getNome() +",");
+                if(contato.getTelefones().isEmpty()){
+                    escrever.print(contato.getSobreNome() +"\n");
+                }else {
+                    escrever.print(contato.getSobreNome() + "|");
+                    for (Telefone telefone : contato.getTelefones()) {
+                        escrever.print(telefone.getId() + "," + telefone.getDdd()+ telefone.getNumero() + "|");
+                    }
+                    escrever.print("\n");
+                }
+            }
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

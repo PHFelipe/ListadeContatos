@@ -43,6 +43,10 @@ public class Contato {
         return sobreNome;
     }
 
+    public List<Telefone> getTelefones(){
+        return this.telefones;
+    }
+
     // Controle de dados
     public boolean verificaIdExistente(Long idNovo) {
         for (Telefone telefone : this.telefones) {
@@ -77,6 +81,10 @@ public class Contato {
                 }
             }
             return false;
+    }
+    public void recebeTelefone(Long id, String ddd, Long numero){
+        Telefone novoTelefone = new Telefone(id, ddd, numero);
+        this.telefones.add(novoTelefone);
     }
 
     public void rmTelefone() {

@@ -3,7 +3,7 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) {
         Agenda agenda = new Agenda();
-
+        agenda.lerAgenda();
         //Cores
         String Azul = "\u001B[34m";
         String reset = "\u001B[0m";
@@ -48,6 +48,7 @@ public class Main {
                         agenda.editContato();
                         break;
                     case 4:
+                        agenda.escreverAgenda();
                         System.exit(0);
                         break;
                     default:
@@ -59,7 +60,6 @@ public class Main {
                 scanner.next(); // Limpa o buffer do Scanner
             }
         }
-
 
     }
 
