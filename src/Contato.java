@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Contato {
@@ -104,38 +105,47 @@ public class Contato {
         }while(!idRemovido);
     }
 
-    public void editTelefone(Long id, String ddd, Long numero) {
-        //Verificação de existencia de ID e numero
-        if (verificaIdExistente(id) && verificaNumExistente(ddd, numero)) {
-            Scanner scanner = new Scanner(System.in);
+    public void editTelefone(Contato contato) {
+        Scanner scanner = new Scanner(System.in);
+        boolean numeroUnico = false;
 
-            boolean numeroUnicoInserido = false;
+        System.out.println("Digite o ID do Telefone:");
+        String idTelefone = scanner.nextLine();
 
+        while (!Agenda.contemNumero(idTelefone)) {
+            System.out.println("O ID deve ser numérico! Digite o ID novamente:");
+            idTelefone = scanner.nextLine();
+        }
+
+        if (verificaIdExistente(Long.valueOf(idTelefone))) {
             do {
-                System.out.println("Digite o novo DDD:");
-                String novoDdd = scanner.next();
-                System.out.println("Digite o novo número:");
-                Long novoNumero = scanner.nextLong();
-                //Verificação se o novo numero com ddd existe na lista e adiciona na lista caso seja realmente novo
-                if (!verificaNumExistente(novoDdd, novoNumero)) {
-                    for (Telefone telefone : telefones) {
-                        if (telefone.getDdd().equals(ddd) && telefone.getNumero() == numero) {
-                            telefone.setNumero(novoNumero);
+                System.out.println("Informe o novo número com o DDD Exemplo->(11939254969):");
+                String numeroEddd = scanner.nextLine();
+
+                while (numeroEddd.length() != 11 || !Agenda.contemNumero(numeroEddd)) {
+                    System.out.println("Número inválido, Digite um número com 11 digitos.");
+                    System.out.println("Informe o número com o DDD Exemplo->(11939254969):");
+                    numeroEddd = scanner.nextLine();
+                }
+
+                //Adiciona o Telefone caso seja único
+                if (!verificaNumExistente(numeroEddd.substring(0, 2), Long.valueOf(numeroEddd.substring(2)))) {
+
+                    for (Telefone telefone : contato.telefones) {
+                        if (Objects.equals(telefone.getId(), Long.valueOf(idTelefone))) {
+
+                            telefone.setDdd(numeroEddd.substring(0, 2));
+                            telefone.setNumero(Long.valueOf(numeroEddd.substring(2)));
+                            numeroUnico = true;
                             System.out.println("Telefone atualizado com sucesso.");
-                            numeroUnicoInserido = true;
-                            break;
                         }
                     }
                 } else {
                     System.out.println("Este número já existe na agenda. Tente novamente.");
                 }
-            } while (!numeroUnicoInserido);
 
-        } else {
-            System.out.println("Telefone não encontrado na agenda.");
+            } while (!numeroUnico);
         }
     }
 
 }
-
-

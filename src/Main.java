@@ -1,5 +1,3 @@
-import java.util.List;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Main {
@@ -47,11 +45,9 @@ public class Main {
                         agenda.rmContato();
                         break;
                     case 3:
-                        // Restante do código do case 3
-                        // ...
+                        agenda.editContato();
                         break;
                     case 4:
-                        // Sair do programa
                         System.exit(0);
                         break;
                     default:

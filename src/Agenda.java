@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class Agenda {
@@ -112,6 +113,46 @@ public class Agenda {
             }
 
         }while (!idRemovido);
+    }
+
+    public void editContato() {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println("Digite o ID do Telefone que voce deseja remover:");
+        String id = scanner.nextLine();
+
+        while(!contemNumero(id)) {
+            System.out.println("O ID deve ser numérico! Digite o ID novamente:");
+            id = scanner.nextLine();
+        }
+
+
+        if (verificaIdExistente(Long.valueOf(id))) {
+            System.out.println("Digite o nome e o sobrenome separados por espaço:");
+            String novoNome = scanner.nextLine();
+            String[] nomeEsobrenome = novoNome.split(" ");
+
+            while (novoNome.trim().isEmpty()) {
+                System.out.println("O nome não pode estar vazio");
+                System.out.println("Digite o nome e o sobrenome separados por espaço:");
+                novoNome = scanner.nextLine();
+            }
+
+            for (Contato contato : this.contatos) {
+                if (Objects.equals(contato.getId(), Long.valueOf(id))) {
+                    if (nomeEsobrenome.length == 1) {
+                        contato.setNome(nomeEsobrenome[0]);
+                        contato.setSobreNome("");
+                    } else {
+                        contato.setNome(nomeEsobrenome[0]);
+                        contato.setSobreNome(nomeEsobrenome[1]);
+                    }
+                }
+            }
+            System.out.println("Contato editado com sucesso!");
+        }else{
+            System.out.println("ID " + id + " não encontrado na lista de números. Por favor, tente novamente.");
+        }
     }
 
     public void exibirAgenda(){
