@@ -229,7 +229,7 @@ public class Agenda {
 
             }
         }catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Parece que é sua primeira vez por aqui... Seja bem-vindo (a)");
         }
 
     }
